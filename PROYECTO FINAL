@@ -1,0 +1,219 @@
+REATE TABLE presidente (
+	Numero_Interno INT NOT NULL,
+    Tipo_Documento VARCHAR (250),
+    Nombre VARCHAR (250),
+    Apellido VARCHAR (250),
+    PRIMARY KEY (Numero_Interno)
+);
+
+INSERT INTO presidente (Numero_Interno, Tipo_Documento, Nombre, Apellido)
+VALUES (111, 'cedula', 'enrique', 'camacho'),
+	   (222, 'cedula', 'sebastian', 'botero'),
+	   (333, 'cedula', 'humberto', 'arias'),
+       (444, 'cedula', 'gerardo', 'concha'),
+       (555, 'cedula', 'manuel', 'castro'),
+       (666, 'cedula', 'antonio', 'martan');
+
+CREATE TABLE informacion_Presidente (
+	Id_Interno INT NOT NULL,
+    Numero_Documento INT NOT NULL UNIQUE,
+    Fecha_Nacimiento VARCHAR (250),
+    Equipo_Preside VARCHAR (250),
+    Anio_Eleccion VARCHAR (250),
+    PRIMARY KEY (Id_Interno),
+    CONSTRAINT FK_IdInterno FOREIGN KEY (Id_Interno) REFERENCES presidente (Numero_Interno)
+);
+
+INSERT INTO informacion_Presidente (Id_Interno, Numero_Documento, Fecha_Nacimiento, Equipo_Preside, Anio_Eleccion)
+VALUES (111, 1110, '24-julio-1953', 'millonarios', '2014'),
+	   (222, 2220, '4-julio-1986', 'nacional', '2024'),
+	   (333, 3330, '10-septiembre-1970', 'cali', '2024'),
+       (444, 4440, '12-abril-1949', 'bucaramanga', '2019'),
+       (555, 5550, '24-diciembre-1976', 'america de cali', '2022'),
+       (666, 6660, '17-agosto-1950', 'cortulua', '2005');
+
+CREATE TABLE info_Equipos (
+	Codigo INT NOT NULL,
+    Nombre VARCHAR (250),
+    Anio_Fundacion VARCHAR (250),
+    Nombre_Estadio VARCHAR (250),
+    Aforo_Estadio VARCHAR (250),
+    PRIMARY KEY (Codigo)
+);
+
+INSERT INTO info_equipos (Codigo, Nombre, Anio_Fundacion, Nombre_Estadio, Aforo_Estadio)
+VALUES (221, 'millonarios', '1946', 'el campin', '53000'),
+	   (223, 'nacional', '1948', 'atanasio girardot', '46000'),
+	   (224, 'cali', '1912', 'palmaseca', '52000'),
+       (225, 'bucaramanga', '1949', 'americo montanini', '28000'),
+       (226, 'america de cali', '1927', 'pascual guerrero', '37899'),
+       (227, 'cortula', '1967', '12 de octubre', '15000');
+
+CREATE TABLE goles_Partido (
+	Codigo_Goles INT NOT NULL, 
+    Codigo_Partido INT NOT NULL,
+    Goles_Local INT NOT NULL,
+    Goles_Visitante INT NOT NULL,
+    Total_Goles INT NOT NULL,
+    PRIMARY KEY (Codigo_Partido)
+);
+
+INSERT INTO goles_partido (Codigo_Goles, Codigo_Partido, Goles_Local, Goles_Visitante, Total_Goles)
+VALUES (7001, 991, 2, 0, 2),
+	   (7002, 992, 3, 2, 5),
+	   (7003, 993, 0, 1, 1),
+       (7004, 994, 1, 2, 3),
+       (7005, 995, 0, 0, 0),
+       (7006, 996, 3, 3, 6);
+
+CREATE TABLE partido (
+	Codigo_Partido INT NOT NULL,
+    Codigo_Equipo INT NOT NULL UNIQUE,
+    Fecha VARCHAR (250),
+    PRIMARY KEY (Codigo_Partido),
+    CONSTRAINT FK_GolesPartidoTabla FOREIGN KEY (Codigo_Partido) REFERENCES Goles_Partido (Codigo_Partido)
+);
+
+INSERT INTO partido (Codigo_Partido, Codigo_Equipo, Fecha)
+VALUES (991, 221, '15-octubre-24'),
+	   (992, 223, '16-octubre-24'),
+	   (993, 224, '17-octubre-24'),
+       (994, 225, '18-octubre-24'),
+       (995, 226, '19-octubre-24'),
+       (996, 227, '20-octubre-24');
+
+CREATE TABLE equipos (
+	Codigo_Equipo INT NOT NULL,
+    Codigo_Presidente INT NOT NULL,
+    Nombre VARCHAR (250),
+    Anio_Fundacion VARCHAR (250),
+    Nombre_Estadio VARCHAR (250),
+    Aforo_Estadio INT NOT NULL,
+    PRIMARY KEY (Codigo_Equipo),
+    CONSTRAINT FK_CodigoPresidente FOREIGN KEY (Codigo_Presidente) REFERENCES informacion_Presidente (Numero_Documento),
+    CONSTRAINT FK_CodigoEquipo FOREIGN KEY (Codigo_Equipo) REFERENCES partido (Codigo_Equipo)
+);
+
+INSERT INTO equipos (Codigo_Equipo, Codigo_Presidente, Nombre, Anio_Fundacion, Nombre_Estadio, Aforo_Estadio)
+VALUES (221, 1110, 'millonarios', '1946', 'el campin', 53000),
+	   (223, 2220, 'nacional', '1948', 'atansio girardot', 46000),
+	   (224, 3330, 'cali', '1912', 'palmaseca', 52000),
+       (225, 4440, 'bucaramanga', '1949', 'americo montanini', 2800),
+       (226, 5550, 'america de cali', '1927', 'pascual guerrero', 37899),
+       (227, 6660, 'cortulua', '1967', '12 de octubre', 15000);
+
+CREATE TABLE jugadores_Equipo(
+	Id_Jugador INT NOT NULL,
+    Codigo_Equipo INT NOT NULL,
+    Codigo_Jugador INT NOT NULL UNIQUE,
+    PRIMARY KEY (Id_Jugador),
+    CONSTRAINT FK_CodigoEquipos FOREIGN KEY (Codigo_Equipo) REFERENCES equipos (Codigo_Equipo),
+    CONSTRAINT FK_CodigoInfoEquipo FOREIGN KEY (Codigo_Equipo) REFERENCES info_Equipos (Codigo)
+);
+
+INSERT INTO jugadores_Equipo (Id_Jugador, Codigo_Equipo, Codigo_Jugador)
+VALUES (1, 221, 123),
+	   (2, 223, 456),
+	   (3, 224, 789),
+       (4, 225, 987),
+       (5, 226, 654),
+       (6, 227, 321);
+
+CREATE TABLE jugador (
+	Codigo_Jugador INT NOT NULL,
+    Nombre VARCHAR (250),
+    Fecha_Nacimiento VARCHAR (250),
+    Posicion VARCHAR (250),
+    PRIMARY KEY (Codigo_Jugador),
+    CONSTRAINT FK_CodigoJugador FOREIGN KEY (Codigo_Jugador) REFERENCES Jugadores_Equipo (Codigo_Jugador)
+);
+
+INSERT INTO jugador (Codigo_Jugador, Nombre, Fecha_Nacimiento, Posicion)
+VALUES (123, 'alvaro montero', '29-marzo-95', 'portero'),
+	   (456, 'juan pablo vargas', '6-junio-95', 'defensa central'),
+	   (789, 'leonardo castro', '14-junio-92', 'centro delantero'),
+	   (987, 'nicolas arevalo', '13-marzo-03', 'pivote'),
+       (654, 'jhon hernandes', '20-febrero-06', 'lateral izquierdo'),
+       (321, 'raul galindo', '1-enero-01', 'extremo derecho');
+
+CREATE TABLE goles (
+    Id_Goles INT AUTO_INCREMENT NOT NULL,
+	Codigo_Jugador INT NOT NULL,
+    Codigo_Partido INT NOT NULL,
+    Descripcion VARCHAR (250),
+    Minuto VARCHAR (250),
+    PRIMARY KEY (Id_Goles),
+    CONSTRAINT FK_Goles_Jugador FOREIGN KEY (Codigo_Jugador) REFERENCES jugador(Codigo_Jugador),
+    CONSTRAINT FK_Goles_Partido FOREIGN KEY (Codigo_Partido) REFERENCES partido(Codigo_Partido)
+);
+
+INSERT INTO goles (Codigo_Jugador, Codigo_Partido, Descripcion, Minuto)
+VALUES (456, 995, 'tiro de esquina', '9'),
+	   (789, 991, 'tiro de esquina', '51'),
+	   (987, 994, 'tiro libre', '60'),
+       (654, 996, 'penal', '90+1'),
+       (321, 992, 'centro', '30');
+
+===============================================================================================================
+===============================================================================================================
+PROCEDIMIENTO ALMACENADO
+
+DELIMITER //
+CREATE PROCEDURE NumeroGolesJugador(in codigo INT )
+BEGIN
+SELECT jugador.Codigo_Jugador AS Documento, jugador.Nombre AS Nombre, equipos.Nombre AS Nombre_Equipo,
+    COUNT(goles.Codigo_Jugador) AS Total_Goles
+from jugador
+inner join goles on jugador.Codigo_Jugador = goles.Codigo_Jugador
+inner join jugadores_equipo on jugador.Codigo_Jugador = jugadores_equipo.Codigo_Jugador
+inner join equipos on equipos.Codigo_Equipo = jugadores_equipo.Codigo_Equipo
+where jugador.Codigo_Jugador = codigo
+GROUP BY jugador.Codigo_Jugador, jugador.Nombre, equipos.Nombre;
+end//
+DELIMITER ;
+
+CALL NumeroGolesJugador(456);
+
+
+===============================================================================================================
+===============================================================================================================
+Crear un usuario distinto al root, que permita visualizar datos o leer, editar, insertar y eliminar.
+
+CREATE USER 'usuario1'@'localhost' IDENTIFIED BY '1111';
+GRANT CREATE, SELECT, INSERT, UPDATE, DELETE, DROP ON prueba.* TO 'usuario1'@'localhost';
+FLUSH PRIVILEGES; 
+SELECT * FROM mysql.db WHERE User = 'usuario1';
+
+
+
+CREATE TABLE paises (
+    Codigo_Pais INT AUTO_INCREMENT PRIMARY KEY,  -- ID único para cada país
+    Nombre VARCHAR(250) NOT NULL,                 -- Nombre del país
+    Capital VARCHAR(250) NOT NULL,                -- Capital del país
+    Poblacion BIGINT NOT NULL,                    -- Población total del país
+    Idioma_Principal VARCHAR(100) NOT NULL,       -- Idioma principal
+    Continente VARCHAR(100) NOT NULL              -- Continente donde está ubicado el país
+);
+
+INSERT INTO paises (Nombre, Capital, Poblacion, Idioma_Principal, Continente)
+VALUES
+('España', 'Madrid', 46719142, 'Español', 'Europa'),
+('Francia', 'París', 66991000, 'Francés', 'Europa'),
+('Brasil', 'Brasilia', 211049527, 'Portugués', 'América'),
+('Japón', 'Tokio', 126860000, 'Japonés', 'Asia'),
+('Australia', 'Canberra', 25687041, 'Inglés', 'Oceanía');
+
+
+SELECT * FROM paises;
+
+INSERT INTO paises (Nombre, Capital, Poblacion, Idioma_Principal, Continente)
+VALUES ('Italia', 'Roma', 60262770, 'Italiano', 'Europa');
+
+UPDATE paises
+SET Poblacion = 213993437, Idioma_Principal = 'Portugués de Brasil'
+WHERE Nombre = 'Brasil';
+
+DELETE FROM paises WHERE Nombre = 'Australia';
+
+DROP TABLE paises;
+
